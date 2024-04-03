@@ -1,27 +1,49 @@
 import React from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
+
+import Edge from "./Edge";
 
 const { width, height } = Dimensions.get("window");
-const boardSize = Math.min(width, height) * 0.9; // Adjust the multiplier as needed
-const gridSize = 10; // Number of rows and columns in the grid
+const boardSize = Math.min(width, height) * 0.8; // Adjust the multiplier as needed
 
-export const GameBoard = () => {
+export const GameBoard = (props) => {
   const renderDots = () => {
     const dots = [];
-    for (let i = 0; i < gridSize + 1; i++) {
-      for (let j = 0; j < gridSize + 1; j++) {
-        dots.push(
-          <View
-            key={`${i}-${j}`}
-            style={[
-              styles.dot,
-              {
-                left: (boardSize / gridSize) * i - 5, // Adjust the offset
-                top: (boardSize / gridSize) * j - 5, // Adjust the offset
-              },
-            ]}
-          />
-        );
+    for (let j = 0; j < props.gridSize * 2 + 1; j++) {
+      let relativeIdxX = 1;
+
+      for (let i = 0; i < (props.gridSize + 1) * 2 - 1; i++) {
+        if ((j % 2 !== 0 && i % 2 === 0) || (j % 2 === 0 && i % 2 !== 0)) {
+          dots.push(
+            <Edge
+              x={relativeIdxX}
+              i={i}
+              j={j}
+              boardSize={boardSize}
+              gridSize={props.gridSize}
+            />
+          );
+          relativeIdxX++;
+        } else {
+          dots.push(
+            <View
+              key={`${i}-${j}`}
+              style={[
+                styles.dot,
+                {
+                  left: (boardSize / (props.gridSize * 2)) * i - 5, // Adjust the offset
+                  top: (boardSize / (props.gridSize * 2)) * j - 5, // Adjust the offset
+                },
+              ]}
+            />
+          );
+        }
       }
     }
     return dots;
@@ -29,21 +51,37 @@ export const GameBoard = () => {
 
   const renderCells = () => {
     const cells = [];
-    for (let i = 0; i < gridSize; i++) {
+    for (let i = 0; i < props.gridSize; i++) {
       const rowCells = [];
-      for (let j = 0; j < gridSize; j++) {
-        rowCells.push(
-          <View
-            key={`${i}-${j}`}
-            style={[
-              styles.cell,
-              {
-                width: boardSize / gridSize,
-                height: boardSize / gridSize,
-              },
-            ]}
-          />
-        );
+      for (let j = 0; j < props.gridSize; j++) {
+        if (i !== j) {
+          rowCells.push(
+            <View
+              key={`${i}-${j}`}
+              style={[
+                styles.cell,
+                {
+                  width: boardSize / props.gridSize,
+                  height: boardSize / props.gridSize,
+                },
+              ]}
+            />
+          );
+        } else {
+          rowCells.push(
+            <View
+              key={`${i}-${j}`}
+              style={[
+                styles.cell,
+                {
+                  width: boardSize / props.gridSize,
+                  height: boardSize / props.gridSize,
+                  backgroundColor: "aqua",
+                },
+              ]}
+            />
+          );
+        }
       }
       cells.push(
         <View key={`row-${i}`} style={styles.row}>
@@ -68,6 +106,8 @@ const styles = StyleSheet.create({
     height: boardSize,
     backgroundColor: "gray",
     position: "relative",
+
+    zIndex: 1, // Set zIndex to 3 for cells
   },
   dot: {
     width: 10,
@@ -75,14 +115,26 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     borderRadius: 5,
     position: "absolute",
+    zIndex: 1, // Set zIndex to 1 for dots
+  },
+  orangeDot: {
+    width: 40,
+    height: 20,
+    backgroundColor: "orange",
+    borderRadius: 5,
+    position: "absolute",
+    zIndex: 10000, // Higher than the dot
   },
   cell: {
     backgroundColor: "transparent",
     borderColor: "black",
     borderWidth: 1,
+    zIndex: 1,
+    // position: "absolute",
   },
   row: {
     flexDirection: "row",
+    zIndex: 1,
   },
 });
 

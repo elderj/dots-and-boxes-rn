@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@expo-google-fonts/pacifico": "^0.2.3",
-    "@react-native-community/slider": "^4.5.0",
     "expo": "~50.0.14",
     "expo-checkbox": "^2.7.0",
     "expo-dev-client": "~3.3.11",
