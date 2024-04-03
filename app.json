@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -21,10 +19,20 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.elderdesignconcepts.dotsandboxes"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3111a04d-cee7-4c5f-8e40-4fc31548a841"
+      },
+      "fontFamily": {
+        "RedditMono": "./assets/fonts/RedditMono-Regular.ttf"
+      }
+    },
+    "owner": "elderdesignconcepts"
   }
 }
