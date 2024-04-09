@@ -1,44 +1,129 @@
-import React from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
-
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Dimensions } from "react-native";
+import Cell from "./Cell";
 import Edge from "./Edge";
+import {
+  countConfirmedEdges,
+  countOpenEdges,
+  getBlankCells,
+  getBlankEdges,
+} from "./helper";
 
 const { width, height } = Dimensions.get("window");
-const boardSize = Math.min(width, height) * 0.8; // Adjust the multiplier as needed
+const boardSize = Math.min(width, height) * 0.9; // Adjust the multiplier as needed
+
+function getEdgePairs(x, y) {
+  const pairs = [];
+
+  // Top edge
+  if (y > 0) {
+    pairs.push({ x: x, y: y * 2 - 2 });
+  }
+
+  // // Left edge
+  pairs.push({ x: x, y: y * 2 - 1 });
+
+  // // Right edge
+  pairs.push({ x: x + 1, y: y * 2 - 1 });
+
+  // // Bottom edge
+  pairs.push({ x: x, y: y * 2 });
+
+  return pairs;
+}
 
 export const GameBoard = (props) => {
-  const renderDots = () => {
+  const [edgeState, setEdgeState] = useState(getBlankEdges(props.gridSize));
+  const [cellState, setCellState] = useState(getBlankCells(props.gridSize));
+
+  const totalEdges = countOpenEdges(edgeState);
+  const [confirmedEdges, setConfirmedEdges] = useState(
+    countConfirmedEdges(edgeState)
+  );
+
+  useEffect(() => {
+    checkGameProgress();
+  }, [edgeState]);
+
+  const checkEdgesOfCell = (ex, why, index) => {
+    const edgesToCheck = getEdgePairs(ex, why);
+
+    const allEdgesConfirmed = edgesToCheck.every(({ x, y }) => {
+      const edge = edgeState.find((edge) => edge.x === x && edge.y === y);
+      return edge && edge.status === "confirmed";
+    });
+
+    if (allEdgesConfirmed) {
+      const updatedCellState = [...cellState];
+      updatedCellState[index] = { x: ex, y: why, ownership: "owned" };
+      setCellState(updatedCellState);
+    }
+  };
+
+  const checkGameProgress = () => {
+    const gameIsOver = countConfirmedEdges(edgeState) === totalEdges;
+
+    if (gameIsOver) {
+      console.log("Game Over!");
+    } else {
+      console.log("Checking Game Progress:");
+      if (confirmedEdges < countConfirmedEdges(edgeState)) {
+        setConfirmedEdges(countConfirmedEdges(edgeState));
+        if (props.playersTurn === 1) {
+          props.setPlayersTurn(2);
+          if (props.players[1].isComputer) {
+            console.log("Ok, computer's turn now");
+            setTimeout(() => {
+              props.setPlayersTurn(1);
+            }, 2500);
+          }
+        } else {
+          props.setPlayersTurn(1);
+        }
+      }
+
+      cellState.forEach((cell, index) => {
+        checkEdgesOfCell(cell.x, cell.y, index);
+      });
+    }
+  };
+
+  const renderEdgesAndDots = () => {
     const dots = [];
     for (let j = 0; j < props.gridSize * 2 + 1; j++) {
       let relativeIdxX = 1;
-
       for (let i = 0; i < (props.gridSize + 1) * 2 - 1; i++) {
         if ((j % 2 !== 0 && i % 2 === 0) || (j % 2 === 0 && i % 2 !== 0)) {
+          const index = edgeState.findIndex(
+            (edge) => edge.x === relativeIdxX && edge.y === j
+          );
+          const status = edgeState[index]?.status || "open";
+          const ownership = edgeState[index]?.ownership || 0;
           dots.push(
             <Edge
+              key={relativeIdxX + "-" + j}
               x={relativeIdxX}
               i={i}
               j={j}
               boardSize={boardSize}
               gridSize={props.gridSize}
+              edgeState={edgeState}
+              setEdgeState={setEdgeState}
+              status={status}
+              playersTurn={props.playersTurn}
+              ownership={ownership}
             />
           );
           relativeIdxX++;
         } else {
           dots.push(
             <View
-              key={`${i}-${j}`}
+              key={`${i}.${j}`}
               style={[
                 styles.dot,
                 {
-                  left: (boardSize / (props.gridSize * 2)) * i - 5, // Adjust the offset
-                  top: (boardSize / (props.gridSize * 2)) * j - 5, // Adjust the offset
+                  left: (boardSize / (props.gridSize * 2)) * i - 5,
+                  top: (boardSize / (props.gridSize * 2)) * j - 5,
                 },
               ]}
             />
@@ -50,51 +135,33 @@ export const GameBoard = (props) => {
   };
 
   const renderCells = () => {
-    const cells = [];
-    for (let i = 0; i < props.gridSize; i++) {
-      const rowCells = [];
-      for (let j = 0; j < props.gridSize; j++) {
-        if (i !== j) {
-          rowCells.push(
-            <View
-              key={`${i}-${j}`}
-              style={[
-                styles.cell,
-                {
-                  width: boardSize / props.gridSize,
-                  height: boardSize / props.gridSize,
-                },
-              ]}
-            />
-          );
-        } else {
-          rowCells.push(
-            <View
-              key={`${i}-${j}`}
-              style={[
-                styles.cell,
-                {
-                  width: boardSize / props.gridSize,
-                  height: boardSize / props.gridSize,
-                  backgroundColor: "aqua",
-                },
-              ]}
-            />
-          );
-        }
+    const renderedCells = [];
+    for (let y = 0; y < props.gridSize; y++) {
+      const colCells = [];
+      for (let x = 0; x < props.gridSize; x++) {
+        colCells.push(
+          <Cell
+            key={`${x}.${y}`}
+            x={x}
+            y={y}
+            boardSize={boardSize}
+            gridSize={props.gridSize}
+            cellState={cellState}
+          />
+        );
       }
-      cells.push(
-        <View key={`row-${i}`} style={styles.row}>
-          {rowCells}
+      renderedCells.push(
+        <View key={`col-${y}`} style={styles.row}>
+          {colCells}
         </View>
       );
     }
-    return cells;
+    return renderedCells;
   };
 
   return (
     <View style={styles.gameBoard}>
-      {renderDots()}
+      {renderEdgesAndDots()}
       {renderCells()}
     </View>
   );
@@ -106,8 +173,7 @@ const styles = StyleSheet.create({
     height: boardSize,
     backgroundColor: "gray",
     position: "relative",
-
-    zIndex: 1, // Set zIndex to 3 for cells
+    zIndex: 1,
   },
   dot: {
     width: 10,
@@ -115,22 +181,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     borderRadius: 5,
     position: "absolute",
-    zIndex: 1, // Set zIndex to 1 for dots
-  },
-  orangeDot: {
-    width: 40,
-    height: 20,
-    backgroundColor: "orange",
-    borderRadius: 5,
-    position: "absolute",
-    zIndex: 10000, // Higher than the dot
-  },
-  cell: {
-    backgroundColor: "transparent",
-    borderColor: "black",
-    borderWidth: 1,
-    zIndex: 1,
-    // position: "absolute",
+    zIndex: 1000,
   },
   row: {
     flexDirection: "row",
