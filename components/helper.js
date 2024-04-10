@@ -47,3 +47,23 @@ export const countOpenEdges = (edgeState) => {
 export const countConfirmedEdges = (edgeState) => {
   return edgeState.filter((edge) => edge.status === "confirmed").length;
 };
+
+export function getEdgePairs(x, y) {
+  const pairs = [];
+
+  // Top edge
+  if (y > 0) {
+    pairs.push({ x: x, y: y * 2 - 2 });
+  }
+
+  // // Left edge
+  pairs.push({ x: x, y: y * 2 - 1 });
+
+  // // Right edge
+  pairs.push({ x: x + 1, y: y * 2 - 1 });
+
+  // // Bottom edge
+  pairs.push({ x: x, y: y * 2 });
+
+  return pairs;
+}

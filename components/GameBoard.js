@@ -7,30 +7,11 @@ import {
   countOpenEdges,
   getBlankCells,
   getBlankEdges,
+  getEdgePairs,
 } from "./helper";
 
 const { width, height } = Dimensions.get("window");
 const boardSize = Math.min(width, height) * 0.9; // Adjust the multiplier as needed
-
-function getEdgePairs(x, y) {
-  const pairs = [];
-
-  // Top edge
-  if (y > 0) {
-    pairs.push({ x: x, y: y * 2 - 2 });
-  }
-
-  // // Left edge
-  pairs.push({ x: x, y: y * 2 - 1 });
-
-  // // Right edge
-  pairs.push({ x: x + 1, y: y * 2 - 1 });
-
-  // // Bottom edge
-  pairs.push({ x: x, y: y * 2 });
-
-  return pairs;
-}
 
 export const GameBoard = (props) => {
   const [edgeState, setEdgeState] = useState(getBlankEdges(props.gridSize));
@@ -54,9 +35,12 @@ export const GameBoard = (props) => {
     });
 
     if (allEdgesConfirmed) {
-      const updatedCellState = [...cellState];
-      updatedCellState[index] = { x: ex, y: why, ownership: "owned" };
-      setCellState(updatedCellState);
+      console.log("Found a Case for    x:" + ex + "   y:" + why);
+      setCellState((prevCellState) => {
+        const updatedCellState = [...prevCellState];
+        updatedCellState[index] = { x: ex, y: why, ownership: "owned" };
+        return updatedCellState;
+      });
     }
   };
 
@@ -85,6 +69,9 @@ export const GameBoard = (props) => {
       cellState.forEach((cell, index) => {
         checkEdgesOfCell(cell.x, cell.y, index);
       });
+
+      console.log("Check Edge State:");
+      console.log(edgeState);
     }
   };
 
