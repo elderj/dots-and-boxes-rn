@@ -7,7 +7,7 @@ import {
   Button,
   TouchableOpacity,
   StyleSheet,
-  TextInput, // Import TextInput
+  TextInput,
 } from "react-native";
 
 const StartMenu = ({
@@ -16,19 +16,18 @@ const StartMenu = ({
   onStartGame,
   setPlayers,
 }) => {
-  const [playerOneName, setPlayerOneName] = useState("Player 1"); // State for player one name
-  const [playerTwoName, setPlayerTwoName] = useState("Player 2"); // State for player one name
-  const [isComputerPlayerEnabled, setIsComputerPlayerEnabled] = useState(true);
+  const [playerOneName, setPlayerOneName] = useState("Player 1");
+  const [playerTwoName, setPlayerTwoName] = useState("Player 2");
+  const [isComputerPlayerEnabled, setIsComputerPlayerEnabled] = useState(false);
+  const [computerDifficulty, setComputerDifficulty] = useState("easy");
+  const [showDifficultyOptions, setShowDifficultyOptions] = useState(false);
 
-  const toggleComputerPlayer = () => {
-    setIsComputerPlayerEnabled(!isComputerPlayerEnabled);
-  };
   const handleIncrease = () => {
     onBoardSizeChange(gridSize + 1);
   };
 
   const handleDecrease = () => {
-    onBoardSizeChange(Math.max(gridSize - 1, 5)); // Ensure board size doesn't go below 5
+    onBoardSizeChange(Math.max(gridSize - 1, 5));
   };
 
   const handleStart = () => {
@@ -38,13 +37,11 @@ const StartMenu = ({
         name: playerTwoName,
         isComputer: isComputerPlayerEnabled,
         color: "#FF5252",
+        difficulty: computerDifficulty,
       },
     ]);
     onStartGame();
   };
-
-  const { width, height } = Dimensions.get("window");
-  const boardSize = Math.min(width, height) * 0.8; // Adjust the multiplier as needed
 
   return (
     <View style={styles.menu}>
@@ -70,34 +67,70 @@ const StartMenu = ({
       </View>
 
       <Text style={styles.stepperButtonText}>Players:</Text>
-      <View style={{ flexDirection: "row", width: boardSize }}>
-        <View style={styles.playerView}>
-          <Text style={styles.playerText}>Player One:</Text>
-          <Text style={styles.label}>Name:</Text>
-          <TextInput
-            style={styles.input}
-            value={playerOneName}
-            onChangeText={setPlayerOneName}
-            placeholder="Enter Name"
+      <View style={styles.playerView}>
+        <Text style={styles.playerText}>Player One:</Text>
+        <Text style={styles.label}>Name:</Text>
+        <TextInput
+          style={styles.input}
+          value={playerOneName}
+          onChangeText={setPlayerOneName}
+          placeholder="Enter Name"
+        />
+      </View>
+      <View style={styles.playerView}>
+        <Text style={styles.playerText}>Player Two:</Text>
+        <Text style={styles.label}>Name:</Text>
+        <TextInput
+          style={styles.input}
+          value={playerTwoName}
+          onChangeText={setPlayerTwoName}
+          placeholder="Enter Name"
+        />
+        <View style={styles.switchContainer}>
+          <Text style={styles.label}>Computer Player:</Text>
+          <Switch
+            value={isComputerPlayerEnabled}
+            onValueChange={(value) => {
+              setIsComputerPlayerEnabled(value);
+              setShowDifficultyOptions(value);
+            }}
           />
         </View>
-        <View style={styles.playerView}>
-          <Text style={styles.playerText}>Player One:</Text>
-          <Text style={styles.label}>Name:</Text>
-          <TextInput
-            style={styles.input}
-            value={playerTwoName}
-            onChangeText={setPlayerTwoName}
-            placeholder="Enter Name"
-          />
-          <View style={styles.switchContainer}>
-            <Text style={styles.label}>Computer Player:</Text>
-            <Switch
-              value={isComputerPlayerEnabled}
-              onValueChange={toggleComputerPlayer}
-            />
+        {showDifficultyOptions && (
+          <View style={styles.difficultyOptions}>
+            <Text style={styles.label}>Difficulty:</Text>
+            <TouchableOpacity
+              onPress={() => setComputerDifficulty("easy")}
+              style={[
+                styles.difficultyButton,
+                computerDifficulty === "easy" &&
+                  styles.selectedDifficultyButton,
+              ]}
+            >
+              <Text style={styles.difficultyButtonText}>Easy</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setComputerDifficulty("medium")}
+              style={[
+                styles.difficultyButton,
+                computerDifficulty === "medium" &&
+                  styles.selectedDifficultyButton,
+              ]}
+            >
+              <Text style={styles.difficultyButtonText}>Medium</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setComputerDifficulty("hard")}
+              style={[
+                styles.difficultyButton,
+                computerDifficulty === "hard" &&
+                  styles.selectedDifficultyButton,
+              ]}
+            >
+              <Text style={styles.difficultyButtonText}>Hard</Text>
+            </TouchableOpacity>
           </View>
-        </View>
+        )}
       </View>
       <Button title="Start Game" onPress={handleStart} />
     </View>
@@ -111,15 +144,14 @@ const styles = StyleSheet.create({
     padding: 30,
     borderRadius: 10,
     backgroundColor: "lightgray",
+    width: 300, // Set a fixed width
   },
-
   stepperContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 15,
   },
-
   stepperButton: {
     padding: 4,
     borderRadius: 5,
@@ -131,21 +163,18 @@ const styles = StyleSheet.create({
   stepperButtonText: {
     fontSize: 15,
     fontWeight: "bold",
-    // padding: 1,
   },
   switchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    // marginTop: 30,
-    marginBottom: 30,
+    marginBottom: 10,
   },
-
   playerView: {
-    flex: 1,
-    marginHorizontal: 5,
-    borderRadius: 2,
+    marginBottom: 10,
   },
-  playerText: { textAlign: "center" },
+  playerText: {
+    marginBottom: 5,
+  },
   input: {
     height: 40,
     borderColor: "gray",
@@ -155,8 +184,26 @@ const styles = StyleSheet.create({
   },
   label: {
     marginBottom: 5,
+    color: "black",
+  },
+  difficultyOptions: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 10,
-    color: "black", // You can adjust the color as needed
+  },
+  difficultyButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginHorizontal: 5,
+    backgroundColor: "#DDDDDD",
+    borderRadius: 5,
+  },
+  selectedDifficultyButton: {
+    backgroundColor: "#2196F3",
+  },
+  difficultyButtonText: {
+    color: "black",
   },
 });
 

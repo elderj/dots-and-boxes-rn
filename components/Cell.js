@@ -12,10 +12,10 @@ const Cell = ({ x, y, boardSize, gridSize, cellState }) => {
         return "lightgray";
       case "owned":
         if (capturedBy === 1) {
-          return "blue";
+          return "#64B5F6";
         } else if (capturedBy === 2) {
           // Check which player captured the cell
-          return "red";
+          return "#FF8A80";
         }
       default:
         return "lightgray"; // Default color

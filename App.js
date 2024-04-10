@@ -4,6 +4,7 @@ import { Modal, StyleSheet, Text, View } from "react-native";
 import { GameBoard } from "./components/GameBoard";
 import StartMenu from "./components/StartMenu";
 import SplashModalContent from "./components/SplashModalContent";
+import CustomText from "./components/CustomText";
 
 export default function App() {
   const [splashModalVisible, setSplashModalVisible] = useState(true);
@@ -25,7 +26,6 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Dots and Boxes</Text>
       <Modal
         animationType="slide"
         transparent={true}
@@ -38,19 +38,30 @@ export default function App() {
       </Modal>
 
       {!splashModalVisible && startMenuVisible && (
-        <StartMenu
-          gridSize={gridSize}
-          onBoardSizeChange={setGridSize}
-          vsComputer={vsComputer}
-          onVsComputerChange={setVsComputer}
-          onStartGame={handleStartGame}
-          setPlayers={setPlayers}
-        />
+        <View style={styles.menuContainer}>
+          <CustomText
+            text="Dots and Boxes"
+            fontFamily="Quicksand_700Bold"
+            styles={styles.title}
+          />
+          <StartMenu
+            gridSize={gridSize}
+            onBoardSizeChange={setGridSize}
+            vsComputer={vsComputer}
+            onVsComputerChange={setVsComputer}
+            onStartGame={handleStartGame}
+            setPlayers={setPlayers}
+          />
+        </View>
       )}
       {!splashModalVisible && !startMenuVisible && (
         <View style={styles.gameContainer}>
+          <CustomText
+            text="Dots and Boxes"
+            fontFamily="Quicksand_700Bold"
+            styles={styles.title}
+          />
           <Text style={styles.gameBoardText}>Player {playersTurn}'s turn</Text>
-          <Text style={styles.gameBoardText}>{gridSize + "x" + gridSize}</Text>
           <GameBoard
             gridSize={gridSize}
             players={players}
@@ -72,20 +83,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingTop: 40, // Adjust this value as needed
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
+  menuContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 30,
   },
   gameContainer: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 30,
   },
   gameBoardText: {
     fontSize: 12,
     fontWeight: "bold",
     marginBottom: 8,
+  },
+  title: {
+    fontSize: 20,
   },
 });
