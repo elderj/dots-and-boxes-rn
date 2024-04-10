@@ -17,7 +17,6 @@ const Edge = ({
   ownership,
 }) => {
   const handlePress = () => {
-    console.log("EDGE Coords:    X: " + x + " Y: " + j);
     if (status !== "confirmed") {
       const updatedEdgeState = edgeState.map((edge) => {
         if (edge.x === x && edge.y === j) {

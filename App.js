@@ -9,7 +9,7 @@ export default function App() {
   const [splashModalVisible, setSplashModalVisible] = useState(true);
   const [startMenuVisible, setStartMenuVisible] = useState(true);
 
-  const [gridSize, setGridSize] = useState(5);
+  const [gridSize, setGridSize] = useState(3);
   const [vsComputer, setVsComputer] = useState(true);
   const [playersTurn, setPlayersTurn] = useState(1);
 

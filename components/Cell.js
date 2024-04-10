@@ -6,24 +6,28 @@ const Cell = ({ x, y, boardSize, gridSize, cellState }) => {
     (cell) => cell.x === x + 1 && cell.y === y + 1
   );
 
-  const getBackgroundColor = (ownership) => {
+  const getBackgroundColor = (ownership, capturedBy) => {
     switch (ownership) {
       case "empty":
         return "lightgray";
       case "owned":
-        return "salmon";
-      // Add more cases for other statuses as needed
+        if (capturedBy === 1) {
+          return "blue";
+        } else if (capturedBy === 2) {
+          // Check which player captured the cell
+          return "red";
+        }
       default:
         return "lightgray"; // Default color
     }
   };
 
   const checker = () => {
-    console.log("check cell state");
-    console.log(cellState[index]);
-    console.log("Check coords:   x" + (x + 1) + "   y:" + (y + 1));
-    console.log("Index:");
-    console.log(index);
+    // console.log("check cell state");
+    // console.log(cellState[index]);
+    // console.log("Check coords:   x" + (x + 1) + "   y:" + (y + 1));
+    // console.log("Index:");
+    // console.log(index);
   };
 
   return (
@@ -34,7 +38,10 @@ const Cell = ({ x, y, boardSize, gridSize, cellState }) => {
           {
             width: boardSize / gridSize,
             height: boardSize / gridSize,
-            backgroundColor: getBackgroundColor(cellState[index]?.ownership),
+            backgroundColor: getBackgroundColor(
+              cellState[index]?.ownership,
+              cellState[index]?.capturedBy
+            ),
           },
         ]}
       >

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions, Text } from "react-native";
 import Cell from "./Cell";
 import Edge from "./Edge";
 import {
@@ -8,6 +8,7 @@ import {
   getBlankCells,
   getBlankEdges,
   getEdgePairs,
+  getPlayerScore,
 } from "./helper";
 
 const { width, height } = Dimensions.get("window");
@@ -16,6 +17,14 @@ const boardSize = Math.min(width, height) * 0.9; // Adjust the multiplier as nee
 export const GameBoard = (props) => {
   const [edgeState, setEdgeState] = useState(getBlankEdges(props.gridSize));
   const [cellState, setCellState] = useState(getBlankCells(props.gridSize));
+  const [player1Score, setPlayer1Score] = useState(
+    getPlayerScore(1, cellState)
+  );
+  const [player2Score, setPlayer2Score] = useState(
+    getPlayerScore(2, cellState)
+  );
+  const [remainingEdges, setRemainingEdges] = useState(edgeState.length);
+  const [remainingCells, setRemainingCells] = useState(cellState.length);
 
   const totalEdges = countOpenEdges(edgeState);
   const [confirmedEdges, setConfirmedEdges] = useState(
@@ -23,8 +32,12 @@ export const GameBoard = (props) => {
   );
 
   useEffect(() => {
-    checkGameProgress();
+    evaluateEdgeState();
   }, [edgeState]);
+
+  useEffect(() => {
+    evaluateCellState();
+  }, [cellState]);
 
   const checkEdgesOfCell = (ex, why, index) => {
     const edgesToCheck = getEdgePairs(ex, why);
@@ -34,29 +47,63 @@ export const GameBoard = (props) => {
       return edge && edge.status === "confirmed";
     });
 
-    if (allEdgesConfirmed) {
-      console.log("Found a Case for    x:" + ex + "   y:" + why);
+    if (allEdgesConfirmed && cellState[index].ownership !== "owned") {
       setCellState((prevCellState) => {
         const updatedCellState = [...prevCellState];
-        updatedCellState[index] = { x: ex, y: why, ownership: "owned" };
+
+        updatedCellState[index] = {
+          x: ex,
+          y: why,
+          ownership: "owned",
+          capturedBy: props.playersTurn, // Store the player who captured the cell
+        };
         return updatedCellState;
       });
     }
   };
 
-  const checkGameProgress = () => {
+  const makeComputersMove = () => {
+    // Filter edges where ownership is 0 and status is open
+    const availableEdges = edgeState.filter(
+      (edge) => edge.ownership === 0 && edge.status === "open"
+    );
+
+    // Check if there are any available edges for the computer to claim
+    if (availableEdges.length > 0) {
+      // Randomly select one of the available edges
+      const randomEdge =
+        availableEdges[Math.floor(Math.random() * availableEdges.length)];
+
+      // Update the selected edge's ownership to 2 and status to "confirmed"
+      const updatedEdge = { ...randomEdge, ownership: 2, status: "confirmed" };
+
+      // Update the edgeState array with the modified edge
+      const updatedEdgeState = edgeState.map((edge) =>
+        edge.x === updatedEdge.x && edge.y === updatedEdge.y
+          ? updatedEdge
+          : edge
+      );
+
+      // Update the state to trigger a re-render
+      setEdgeState(updatedEdgeState);
+    } else {
+      // Handle the case when there are no available edges for the computer to claim
+      console.log("No available edges for the computer to claim.");
+    }
+  };
+
+  const evaluateEdgeState = () => {
     const gameIsOver = countConfirmedEdges(edgeState) === totalEdges;
 
     if (gameIsOver) {
       console.log("Game Over!");
     } else {
-      console.log("Checking Game Progress:");
       if (confirmedEdges < countConfirmedEdges(edgeState)) {
         setConfirmedEdges(countConfirmedEdges(edgeState));
         if (props.playersTurn === 1) {
           props.setPlayersTurn(2);
           if (props.players[1].isComputer) {
-            console.log("Ok, computer's turn now");
+            makeComputersMove();
             setTimeout(() => {
               props.setPlayersTurn(1);
             }, 2500);
@@ -70,9 +117,14 @@ export const GameBoard = (props) => {
         checkEdgesOfCell(cell.x, cell.y, index);
       });
 
-      console.log("Check Edge State:");
-      console.log(edgeState);
+      setRemainingEdges(edgeState.length - countConfirmedEdges(edgeState));
     }
+  };
+
+  const evaluateCellState = () => {
+    setRemainingCells(getPlayerScore(0, cellState));
+    setPlayer1Score(getPlayerScore(1, cellState));
+    setPlayer2Score(getPlayerScore(2, cellState));
   };
 
   const renderEdgesAndDots = () => {
@@ -146,15 +198,57 @@ export const GameBoard = (props) => {
     return renderedCells;
   };
 
+  const renderPlayerInfo = () => {
+    return (
+      <View style={styles.playerInfo}>
+        <View style={styles.playerScore}>
+          <Text>Player 1 Score: {player1Score}</Text>
+        </View>
+        <View style={styles.playerScore}>
+          <Text>Player 2 Score: {player2Score}</Text>
+        </View>
+      </View>
+    );
+  };
+
+  const renderGeneralInfo = () => {
+    return (
+      <View style={styles.generalInfo}>
+        <Text>Remaining Edges: {remainingEdges}</Text>
+        <Text>Remaining Cells: {remainingCells}</Text>
+      </View>
+    );
+  };
+
   return (
-    <View style={styles.gameBoard}>
-      {renderEdgesAndDots()}
-      {renderCells()}
+    <View style={styles.container}>
+      {renderPlayerInfo()}
+      {renderGeneralInfo()}
+      <View style={styles.gameBoard}>
+        {renderEdgesAndDots()}
+        {renderCells()}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  playerInfo: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  playerScore: {
+    flex: 1,
+    alignItems: "center",
+  },
+  generalInfo: {
+    alignItems: "center",
+    marginBottom: 10,
+  },
   gameBoard: {
     width: boardSize,
     height: boardSize,
