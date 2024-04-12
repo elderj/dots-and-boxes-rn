@@ -28,11 +28,11 @@
     "extra": {
       "eas": {
         "projectId": "3111a04d-cee7-4c5f-8e40-4fc31548a841"
-      },
-      "fontFamily": {
-        "RedditMono": "./assets/fonts/RedditMono-Regular.ttf"
       }
     },
     "owner": "elderdesignconcepts"
+  },
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-9896015466295501~9109251910"
   }
 }

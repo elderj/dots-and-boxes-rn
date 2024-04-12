@@ -73,3 +73,14 @@ export const getPlayerScore = (ownership, cellState) => {
     }, 0);
   }
 };
+
+export const getDefaultPlayers = () => {
+  return [
+    {
+      name: "Player 1",
+    },
+    {
+      name: "Player 2",
+    },
+  ];
+};

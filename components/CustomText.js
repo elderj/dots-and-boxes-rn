@@ -7,7 +7,7 @@ import { useFonts, Pacifico_400Regular } from "@expo-google-fonts/pacifico";
 import {
   // Quicksand_300Light,
   Quicksand_400Regular,
-  // Quicksand_500Medium,
+  Quicksand_500Medium,
   Quicksand_600SemiBold,
   Quicksand_700Bold,
 } from "@expo-google-fonts/quicksand";
@@ -15,6 +15,7 @@ import {
 export default function CustomText(props) {
   let [fontsLoaded] = useFonts({
     Quicksand_400Regular,
+    Quicksand_500Medium,
     Quicksand_600SemiBold,
     Quicksand_700Bold,
     Pacifico_400Regular,

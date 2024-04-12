@@ -1,26 +1,29 @@
 import React, { useState } from "react";
 import {
-  Dimensions,
-  View,
   Text,
+  View,
   Switch,
   Button,
   TouchableOpacity,
   StyleSheet,
   TextInput,
 } from "react-native";
+import CustomText from "./CustomText";
 
 const StartMenu = ({
   gridSize,
   onBoardSizeChange,
   onStartGame,
   setPlayers,
+  players,
 }) => {
-  const [playerOneName, setPlayerOneName] = useState("Player 1");
-  const [playerTwoName, setPlayerTwoName] = useState("Player 2");
+  const [playerOneName, setPlayerOneName] = useState(players[0].name);
+  const [playerTwoName, setPlayerTwoName] = useState(players[1].name);
   const [isComputerPlayerEnabled, setIsComputerPlayerEnabled] = useState(false);
   const [computerDifficulty, setComputerDifficulty] = useState("easy");
   const [showDifficultyOptions, setShowDifficultyOptions] = useState(false);
+  const [playerOneColor, setPlayerOneColor] = useState("#1E88E5");
+  const [playerTwoColor, setPlayerTwoColor] = useState("#FF5252");
 
   const handleIncrease = () => {
     onBoardSizeChange(gridSize + 1);
@@ -32,11 +35,11 @@ const StartMenu = ({
 
   const handleStart = () => {
     setPlayers([
-      { name: playerOneName, isComputer: false, color: "#1E88E5" },
+      { name: playerOneName, isComputer: false, color: playerOneColor },
       {
         name: playerTwoName,
         isComputer: isComputerPlayerEnabled,
-        color: "#FF5252",
+        color: playerTwoColor,
         difficulty: computerDifficulty,
       },
     ]);
@@ -45,49 +48,139 @@ const StartMenu = ({
 
   return (
     <View style={styles.menu}>
-      <Text style={styles.stepperButtonText}>Board Size:</Text>
+      <CustomText
+        text="Game Options:"
+        fontFamily="Quicksand_700Bold"
+        styles={styles.bigTitle}
+      />
+
+      <CustomText
+        text="Board Options:"
+        fontFamily="Quicksand_700Bold"
+        styles={styles.stepperButtonText}
+      />
+
       <View style={styles.stepperContainer}>
+        <CustomText
+          text="Board Size:"
+          fontFamily="Quicksand_400Regular"
+          styles={styles.label}
+        />
         <TouchableOpacity
           style={{ backgroundColor: "#FF5252", ...styles.stepperButton }}
           onPress={handleDecrease}
           disabled={gridSize <= 4}
         >
-          <Text style={{ color: "white", ...styles.stepperButtonText }}>-</Text>
+          <CustomText
+            text="-"
+            fontFamily="Quicksand_700Bold"
+            styles={{ color: "white", ...styles.stepperButtonText }}
+          />
         </TouchableOpacity>
-        <Text>
-          {gridSize}x{gridSize}
-        </Text>
+
+        <CustomText
+          text={gridSize + "x" + gridSize}
+          fontFamily="Quicksand_700Bold"
+        />
         <TouchableOpacity
           style={{ backgroundColor: "#4CAF50", ...styles.stepperButton }}
           onPress={handleIncrease}
           disabled={gridSize > 9}
         >
-          <Text style={{ color: "white", ...styles.stepperButtonText }}>+</Text>
+          <CustomText
+            text="+"
+            fontFamily="Quicksand_700Bold"
+            styles={{ color: "white", ...styles.stepperButtonText }}
+          />
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.stepperButtonText}>Players:</Text>
-      <View style={styles.playerView}>
-        <Text style={styles.playerText}>Player One:</Text>
-        <Text style={styles.label}>Name:</Text>
-        <TextInput
-          style={styles.input}
-          value={playerOneName}
-          onChangeText={setPlayerOneName}
-          placeholder="Enter Name"
+      {/* Could add additional options here like bonus squares */}
+      {/* <View style={styles.stepperContainer}>
+        <CustomText
+          text="Ya ya :"
+          fontFamily="Quicksand_400Regular"
+          styles={styles.label}
         />
+      </View> */}
+
+      <CustomText
+        text="Player Options:"
+        fontFamily="Quicksand_700Bold"
+        styles={styles.stepperButtonText}
+      />
+      <View style={styles.playerView}>
+        <CustomText
+          text="Player One:"
+          fontFamily="Quicksand_500Medium"
+          styles={styles.playerText}
+        />
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ marginHorizontal: 40 }}>
+            <CustomText
+              text="Name:"
+              fontFamily="Quicksand_400Regular"
+              styles={styles.label}
+            />
+            <TextInput
+              style={styles.input}
+              value={playerOneName}
+              onChangeText={setPlayerOneName}
+              placeholder="Enter Name"
+            />
+          </View>
+          <View>
+            <CustomText
+              text="Color:"
+              fontFamily="Quicksand_400Regular"
+              styles={styles.label}
+            />
+            <TouchableOpacity
+              style={[styles.colorBox, { backgroundColor: playerOneColor }]}
+              onPress={() => setPlayerOneColor("#1E88E5")}
+            />
+          </View>
+        </View>
       </View>
+      <View style={styles.divider} />
       <View style={styles.playerView}>
-        <Text style={styles.playerText}>Player Two:</Text>
-        <Text style={styles.label}>Name:</Text>
-        <TextInput
-          style={styles.input}
-          value={playerTwoName}
-          onChangeText={setPlayerTwoName}
-          placeholder="Enter Name"
+        <CustomText
+          text="Player Two:"
+          fontFamily="Quicksand_500Medium"
+          styles={styles.playerText}
         />
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ marginHorizontal: 40 }}>
+            <CustomText
+              text="Name:"
+              fontFamily="Quicksand_400Regular"
+              styles={styles.label}
+            />
+            <TextInput
+              style={styles.input}
+              value={playerTwoName}
+              onChangeText={setPlayerTwoName}
+              placeholder="Enter Name"
+            />
+          </View>
+          <View>
+            <CustomText
+              text="Color:"
+              fontFamily="Quicksand_400Regular"
+              styles={styles.label}
+            />
+            <TouchableOpacity
+              style={[styles.colorBox, { backgroundColor: playerTwoColor }]}
+              onPress={() => setPlayerOneColor("#FF5252")}
+            />
+          </View>
+        </View>
         <View style={styles.switchContainer}>
-          <Text style={styles.label}>Computer Player:</Text>
+          <CustomText
+            text="Computer Player:"
+            fontFamily="Quicksand_400Regular"
+            styles={styles.label}
+          />
           <Switch
             value={isComputerPlayerEnabled}
             onValueChange={(value) => {
@@ -98,13 +191,17 @@ const StartMenu = ({
         </View>
         {showDifficultyOptions && (
           <View style={styles.difficultyOptions}>
-            <Text style={styles.label}>Difficulty:</Text>
+            <CustomText
+              text="Difficulty:"
+              fontFamily="Quicksand_400Regular"
+              styles={styles.label}
+            />
+
             <TouchableOpacity
               onPress={() => setComputerDifficulty("easy")}
               style={[
                 styles.difficultyButton,
-                computerDifficulty === "easy" &&
-                  styles.selectedDifficultyButton,
+                computerDifficulty === "easy" && styles.selectedEasyButton,
               ]}
             >
               <Text style={styles.difficultyButtonText}>Easy</Text>
@@ -113,8 +210,7 @@ const StartMenu = ({
               onPress={() => setComputerDifficulty("medium")}
               style={[
                 styles.difficultyButton,
-                computerDifficulty === "medium" &&
-                  styles.selectedDifficultyButton,
+                computerDifficulty === "medium" && styles.selectedMedButton,
               ]}
             >
               <Text style={styles.difficultyButtonText}>Medium</Text>
@@ -123,8 +219,7 @@ const StartMenu = ({
               onPress={() => setComputerDifficulty("hard")}
               style={[
                 styles.difficultyButton,
-                computerDifficulty === "hard" &&
-                  styles.selectedDifficultyButton,
+                computerDifficulty === "hard" && styles.selectedHardButton,
               ]}
             >
               <Text style={styles.difficultyButtonText}>Hard</Text>
@@ -138,19 +233,24 @@ const StartMenu = ({
 };
 
 const styles = StyleSheet.create({
+  bigTitle: {
+    fontSize: 24,
+    marginBottom: 24,
+  },
   menu: {
     alignItems: "center",
     justifyContent: "center",
     padding: 30,
     borderRadius: 10,
-    backgroundColor: "lightgray",
-    width: 300, // Set a fixed width
+    backgroundColor: "white",
+    width: "70%",
+    borderRadius: 30,
   },
   stepperContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 15,
+    marginBottom: 20,
   },
   stepperButton: {
     padding: 4,
@@ -170,10 +270,17 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   playerView: {
+    width: "100%",
     marginBottom: 10,
   },
   playerText: {
     marginBottom: 5,
+  },
+  divider: {
+    borderBottomWidth: 1,
+    borderBottomColor: "black",
+    width: "110%",
+    marginVertical: 10,
   },
   input: {
     height: 40,
@@ -181,6 +288,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 10,
     marginBottom: 10,
+    backgroundColor: "white",
+    borderRadius: 2,
+    width: 150,
   },
   label: {
     marginBottom: 5,
@@ -188,9 +298,10 @@ const styles = StyleSheet.create({
   },
   difficultyOptions: {
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
     marginTop: 10,
+    marginLeft: 20,
+    marginBottom: 20,
   },
   difficultyButton: {
     paddingVertical: 8,
@@ -199,11 +310,23 @@ const styles = StyleSheet.create({
     backgroundColor: "#DDDDDD",
     borderRadius: 5,
   },
-  selectedDifficultyButton: {
-    backgroundColor: "#2196F3",
+  selectedEasyButton: {
+    backgroundColor: "#4CAF50",
+  },
+  selectedMedButton: {
+    backgroundColor: "#FFD700",
+  },
+  selectedHardButton: {
+    backgroundColor: "#FF5733",
   },
   difficultyButtonText: {
     color: "black",
+  },
+  colorBox: {
+    width: 30,
+    height: 30,
+    marginVertical: 5,
+    borderRadius: 5,
   },
 });
 

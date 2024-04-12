@@ -1,26 +1,45 @@
-import React, { useState } from "react";
-import { StatusBar } from "expo-status-bar";
-import { Modal, StyleSheet, Text, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StatusBar, ImageBackground, StyleSheet, Button } from "react-native";
+import { Modal, View, Text } from "react-native";
 import { GameBoard } from "./components/GameBoard";
 import StartMenu from "./components/StartMenu";
 import SplashModalContent from "./components/SplashModalContent";
 import CustomText from "./components/CustomText";
+import { getDefaultPlayers } from "./components/helper";
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+  useInterstitialAd,
+} from "react-native-google-mobile-ads";
+
+const interstitialAdId = __DEV__
+  ? TestIds.INTERSTITIAL
+  : "ca-app-pub-9896015466295501/9192500131";
 
 export default function App() {
   const [splashModalVisible, setSplashModalVisible] = useState(true);
   const [startMenuVisible, setStartMenuVisible] = useState(true);
-
   const [gridSize, setGridSize] = useState(3);
   const [vsComputer, setVsComputer] = useState(true);
   const [playersTurn, setPlayersTurn] = useState(1);
+  const [players, setPlayers] = useState(getDefaultPlayers());
 
-  const [players, setPlayers] = useState([]);
+  const { isLoaded, load, show } = useInterstitialAd(interstitialAdId, {
+    requestNonPersonalizedAdsOnly: true,
+  });
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  useEffect(() => {
+    if (!splashModalVisible && isLoaded) {
+      show();
+    }
+  }, [splashModalVisible, isLoaded]);
 
   const handleStartGame = () => {
-    console.log("Starting a game");
-    console.log("Grid Size:" + gridSize);
-    console.log("Play Comp:" + vsComputer);
-
     setStartMenuVisible(false);
   };
 
@@ -38,21 +57,22 @@ export default function App() {
       </Modal>
 
       {!splashModalVisible && startMenuVisible && (
-        <View style={styles.menuContainer}>
-          <CustomText
-            text="Dots and Boxes"
-            fontFamily="Quicksand_700Bold"
-            styles={styles.title}
-          />
-          <StartMenu
-            gridSize={gridSize}
-            onBoardSizeChange={setGridSize}
-            vsComputer={vsComputer}
-            onVsComputerChange={setVsComputer}
-            onStartGame={handleStartGame}
-            setPlayers={setPlayers}
-          />
-        </View>
+        <ImageBackground
+          source={require("./assets/images/boardbg.png")}
+          style={styles.imageBackground}
+        >
+          <View style={styles.menuContainer}>
+            <StartMenu
+              gridSize={gridSize}
+              onBoardSizeChange={setGridSize}
+              vsComputer={vsComputer}
+              onVsComputerChange={setVsComputer}
+              onStartGame={handleStartGame}
+              setPlayers={setPlayers}
+              players={players}
+            />
+          </View>
+        </ImageBackground>
       )}
       {!splashModalVisible && !startMenuVisible && (
         <View style={styles.gameContainer}>
@@ -67,6 +87,7 @@ export default function App() {
             players={players}
             playersTurn={playersTurn}
             setPlayersTurn={setPlayersTurn}
+            setStartMenuVisible={setStartMenuVisible}
           />
         </View>
       )}
@@ -78,16 +99,22 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
+    backgroundColor: "transparent",
+  },
+  imageBackground: {
+    flex: 1,
+    resizeMode: "cover",
     justifyContent: "center",
-    paddingTop: 40, // Adjust this value as needed
   },
   menuContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 30,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(255, 255, 255, 0.8)", // Use a semi-transparent background color
+    marginTop: -20,
   },
   gameContainer: {
     flex: 1,
@@ -98,7 +125,6 @@ const styles = StyleSheet.create({
   gameBoardText: {
     fontSize: 12,
     fontWeight: "bold",
-    marginBottom: 8,
   },
   title: {
     fontSize: 20,
