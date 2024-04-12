@@ -3,7 +3,6 @@ import {
   Text,
   View,
   Switch,
-  Button,
   TouchableOpacity,
   StyleSheet,
   TextInput,
@@ -26,11 +25,15 @@ const StartMenu = ({
   const [playerTwoColor, setPlayerTwoColor] = useState("#FF5252");
 
   const handleIncrease = () => {
-    onBoardSizeChange(gridSize + 1);
+    if (gridSize <= 11) {
+      onBoardSizeChange(gridSize + 1);
+    }
   };
 
   const handleDecrease = () => {
-    onBoardSizeChange(Math.max(gridSize - 1, 5));
+    if (gridSize > 1) {
+      onBoardSizeChange(gridSize - 1);
+    }
   };
 
   const handleStart = () => {
@@ -57,7 +60,7 @@ const StartMenu = ({
       <CustomText
         text="Board Options:"
         fontFamily="Quicksand_700Bold"
-        styles={styles.stepperButtonText}
+        styles={styles.subTitleText}
       />
 
       <View style={styles.stepperContainer}>
@@ -69,7 +72,7 @@ const StartMenu = ({
         <TouchableOpacity
           style={{ backgroundColor: "#FF5252", ...styles.stepperButton }}
           onPress={handleDecrease}
-          disabled={gridSize <= 4}
+          disabled={gridSize <= 1}
         >
           <CustomText
             text="-"
@@ -85,7 +88,7 @@ const StartMenu = ({
         <TouchableOpacity
           style={{ backgroundColor: "#4CAF50", ...styles.stepperButton }}
           onPress={handleIncrease}
-          disabled={gridSize > 9}
+          disabled={gridSize > 10}
         >
           <CustomText
             text="+"
@@ -107,7 +110,7 @@ const StartMenu = ({
       <CustomText
         text="Player Options:"
         fontFamily="Quicksand_700Bold"
-        styles={styles.stepperButtonText}
+        styles={styles.subTitleText}
       />
       <View style={styles.playerView}>
         <CustomText
@@ -116,7 +119,7 @@ const StartMenu = ({
           styles={styles.playerText}
         />
         <View style={{ flexDirection: "row" }}>
-          <View style={{ marginHorizontal: 40 }}>
+          <View style={{ marginHorizontal: "5%" }}>
             <CustomText
               text="Name:"
               fontFamily="Quicksand_400Regular"
@@ -137,7 +140,7 @@ const StartMenu = ({
             />
             <TouchableOpacity
               style={[styles.colorBox, { backgroundColor: playerOneColor }]}
-              onPress={() => setPlayerOneColor("#1E88E5")}
+              // onPress={() => setPlayerOneColor("#1E88E5")}
             />
           </View>
         </View>
@@ -150,7 +153,7 @@ const StartMenu = ({
           styles={styles.playerText}
         />
         <View style={{ flexDirection: "row" }}>
-          <View style={{ marginHorizontal: 40 }}>
+          <View style={{ marginHorizontal: "5%" }}>
             <CustomText
               text="Name:"
               fontFamily="Quicksand_400Regular"
@@ -171,7 +174,7 @@ const StartMenu = ({
             />
             <TouchableOpacity
               style={[styles.colorBox, { backgroundColor: playerTwoColor }]}
-              onPress={() => setPlayerOneColor("#FF5252")}
+              // onPress={() => setPlayerOneColor("#FF5252")}
             />
           </View>
         </View>
@@ -227,7 +230,11 @@ const StartMenu = ({
           </View>
         )}
       </View>
-      <Button title="Start Game" onPress={handleStart} />
+      <View style={styles.stepperContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleStart}>
+          <Text style={styles.buttonText}>Start Game</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -235,22 +242,24 @@ const StartMenu = ({
 const styles = StyleSheet.create({
   bigTitle: {
     fontSize: 24,
-    marginBottom: 24,
+    marginBottom: 30,
+    textAlign: "center",
   },
   menu: {
-    alignItems: "center",
     justifyContent: "center",
     padding: 30,
-    borderRadius: 10,
+
     backgroundColor: "white",
-    width: "70%",
+    width: "77%",
     borderRadius: 30,
+    borderColor: "#000",
+    borderWidth: 2,
   },
   stepperContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 20,
+    marginBottom: 10,
   },
   stepperButton: {
     padding: 4,
@@ -263,6 +272,12 @@ const styles = StyleSheet.create({
   stepperButtonText: {
     fontSize: 15,
     fontWeight: "bold",
+  },
+  subTitleText: {
+    fontSize: 15,
+    fontWeight: "bold",
+    marginBottom: 10,
+    marginLeft: -5,
   },
   switchContainer: {
     flexDirection: "row",
@@ -279,8 +294,9 @@ const styles = StyleSheet.create({
   divider: {
     borderBottomWidth: 1,
     borderBottomColor: "black",
-    width: "110%",
     marginVertical: 10,
+    alignItems: "center",
+    textAlign: "center",
   },
   input: {
     height: 40,
@@ -299,8 +315,8 @@ const styles = StyleSheet.create({
   difficultyOptions: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 10,
-    marginLeft: 20,
     marginBottom: 20,
   },
   difficultyButton: {
@@ -327,6 +343,18 @@ const styles = StyleSheet.create({
     height: 30,
     marginVertical: 5,
     borderRadius: 5,
+  },
+
+  button: {
+    backgroundColor: "#DDDDDD",
+    padding: 10,
+    borderRadius: 5,
+    width: "40%",
+    alignItems: "center",
+  },
+  buttonText: {
+    fontSize: 18,
+    padding: 5,
   },
 });
 

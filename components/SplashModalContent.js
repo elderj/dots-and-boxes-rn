@@ -3,6 +3,7 @@ import {
   Dimensions,
   Image,
   ImageBackground,
+  Linking,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -12,6 +13,10 @@ import {
 import CustomText from "./CustomText";
 
 const height = Dimensions.get("window").height;
+
+const openUrl = (url) => {
+  Linking.openURL(url);
+};
 
 export default function SplashModalContent(props) {
   const [agreed, setAgreed] = useState(false);
@@ -71,7 +76,7 @@ export default function SplashModalContent(props) {
           <Switch
             value={agreed}
             onValueChange={(value) => setAgreed(value)}
-            trackColor={{ false: "lightgray", true: "green" }}
+            trackColor={{ false: "#F6B90A", true: "#B4EB0A" }}
           />
           <CustomText
             text="I have read and agree to the"
@@ -129,10 +134,15 @@ const styles = StyleSheet.create({
   switchContainer: {
     alignItems: "center",
     marginBottom: 20,
+    maxWidth: "95%",
+    flexWrap: "wrap",
     flexDirection: "row",
+    textAlign: "center",
+    justifyContent: "center",
   },
   appTitle: {
-    fontSize: 16,
+    fontSize: 14,
+    flexWrap: "wrap",
   },
   brandLogoFont: {
     fontSize: height * 0.0275,

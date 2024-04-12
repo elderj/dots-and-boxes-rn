@@ -31,25 +31,25 @@ const Cell = ({ x, y, boardSize, gridSize, cellState }) => {
   };
 
   return (
-    <TouchableOpacity onPress={checker}>
-      <View
-        style={[
-          styles.cell,
-          {
-            width: boardSize / gridSize,
-            height: boardSize / gridSize,
-            backgroundColor: getBackgroundColor(
-              cellState[index]?.ownership,
-              cellState[index]?.capturedBy
-            ),
-          },
-        ]}
-      >
-        {/* <Text>
+    // <TouchableOpacity onPress={checker}>
+    <View
+      style={[
+        styles.cell,
+        {
+          width: boardSize / gridSize,
+          height: boardSize / gridSize,
+          backgroundColor: getBackgroundColor(
+            cellState[index]?.ownership,
+            cellState[index]?.capturedBy
+          ),
+        },
+      ]}
+    >
+      {/* <Text>
           X: {cellState[index]?.x} Y: {cellState[index]?.y}
         </Text> */}
-      </View>
-    </TouchableOpacity>
+    </View>
+    // </TouchableOpacity>
   );
 };
 

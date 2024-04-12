@@ -1,26 +1,48 @@
 import React from "react";
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
+import CustomText from "./CustomText";
 
 const GameOverModalContent = (props) => {
+  const winnerIdx = props.player1Score > props.player2Score ? 0 : 1;
+
+  const winnerName = props.players[winnerIdx].name;
+
   return (
     <View style={styles.container}>
-      <Image source={require("../assets/images/go.png")} style={styles.image} />
+      <Image
+        source={require("../assets/images/drawnCrown.png")}
+        style={styles.image}
+      />
+      <CustomText
+        text="Game Over!"
+        fontFamily="Pacifico_400Regular"
+        styles={styles.fancyTitle}
+      />
+
+      <CustomText
+        text={winnerName + " wins!"}
+        fontFamily="Quicksand_400Regular"
+        styles={styles.winnerMsg}
+      />
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[styles.button, { marginRight: 10 }]}
           onPress={props.handleResetChangeOpts}
         >
-          <Text style={styles.buttonText}>Change Options</Text>
+          <CustomText
+            text="Change Options"
+            fontFamily="Quicksand_400Regular"
+            styles={styles.buttonText}
+          />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={props.handleReset}>
-          <Text style={styles.buttonText}>Reset Game</Text>
+          <CustomText
+            text="Reset Game"
+            fontFamily="Quicksand_400Regular"
+            styles={styles.buttonText}
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -29,8 +51,8 @@ const GameOverModalContent = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 300,
-    height: 300, // Adjust the size as needed
+    width: 400,
+    height: 400, // Adjust the size as needed
     borderRadius: 10,
     backgroundColor: "#fff",
     alignItems: "center",
@@ -38,12 +60,22 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: "50%",
     left: "50%",
-    marginTop: -150, // Half of the height
-    marginLeft: -150, // Half of the width
+    marginTop: -250, // Half of the height
+    marginLeft: -200, // Half of the width
+    borderColor: "black",
+    borderWidth: 5,
+  },
+  fancyTitle: {
+    fontSize: 30,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 140,
+    height: 140,
+  },
+  winnerMsg: {
+    fontSize: 18,
+    marginTop: 8,
+    marginBottom: 30,
   },
   buttonContainer: {
     flexDirection: "row",

@@ -60,11 +60,12 @@ export const GameBoard = (props) => {
     loadGameplay();
   }, [loadGameplay]);
 
-  useEffect(() => {
-    if (remainingCells === 0 && isLoadedGameplay) {
-      showGameplay();
-    }
-  }, [remainingCells, isLoadedGameplay]);
+  // TODO: Consider adding this back in if you want an add that fires right at gameover
+  // useEffect(() => {
+  //   if (remainingCells === 0 && isLoadedGameplay) {
+  //     showGameplay();
+  //   }
+  // }, [remainingCells, isLoadedGameplay]);
 
   // Game Reset Interstitial
   const interstitialAdIdReset = __DEV__
@@ -82,10 +83,10 @@ export const GameBoard = (props) => {
   }, [loadReset]);
 
   useEffect(() => {
-    if (remainingCells === 0 && isLoadedReset) {
+    if (remainingCells === 0 && isLoadedGameplay) {
       showGameplay();
     }
-  }, [remainingCells, isLoadedReset]);
+  }, [remainingCells, isLoadedGameplay]);
 
   useEffect(() => {
     evaluateEdgeState();
@@ -141,7 +142,7 @@ export const GameBoard = (props) => {
     }
   };
 
-  const makeComputersMove = () => {
+  const makeComputersMoveEasy = () => {
     // Filter edges where ownership is 0 and status is open
     const availableEdges = edgeState.filter(
       (edge) => edge.ownership === 0 && edge.status === "open"
@@ -171,13 +172,91 @@ export const GameBoard = (props) => {
     }
   };
 
+  const makeComputersMoveMedium = () => {
+    // Filter edges where ownership is 0 and status is open
+    const availableEdges = edgeState.filter(
+      (edge) => edge.ownership === 0 && edge.status === "open"
+    );
+
+    // Check if there are any available edges for the computer to claim
+    if (availableEdges.length > 0) {
+      // Randomly select one of the available edges
+      const randomEdge =
+        availableEdges[Math.floor(Math.random() * availableEdges.length)];
+
+      // Update the selected edge's ownership to 2 and status to "confirmed"
+      const updatedEdge = { ...randomEdge, ownership: 2, status: "confirmed" };
+
+      // Update the edgeState array with the modified edge
+      const updatedEdgeState = edgeState.map((edge) =>
+        edge.x === updatedEdge.x && edge.y === updatedEdge.y
+          ? updatedEdge
+          : edge
+      );
+
+      // Update the state to trigger a re-render
+      setEdgeState(updatedEdgeState);
+    } else {
+      // Handle the case when there are no available edges for the computer to claim
+      console.log("No available edges for the computer to claim.");
+    }
+  };
+
+  const makeComputersMoveHard = () => {
+    // Filter edges where ownership is 0 and status is open
+    const availableEdges = edgeState.filter(
+      (edge) => edge.ownership === 0 && edge.status === "open"
+    );
+
+    // Check if there are any available edges for the computer to claim
+    if (availableEdges.length > 0) {
+      // Randomly select one of the available edges
+      const randomEdge =
+        availableEdges[Math.floor(Math.random() * availableEdges.length)];
+
+      // Update the selected edge's ownership to 2 and status to "confirmed"
+      const updatedEdge = { ...randomEdge, ownership: 2, status: "confirmed" };
+
+      // Update the edgeState array with the modified edge
+      const updatedEdgeState = edgeState.map((edge) =>
+        edge.x === updatedEdge.x && edge.y === updatedEdge.y
+          ? updatedEdge
+          : edge
+      );
+
+      // Update the state to trigger a re-render
+      setEdgeState(updatedEdgeState);
+    } else {
+      // Handle the case when there are no available edges for the computer to claim
+      console.log("No available edges for the computer to claim.");
+    }
+  };
+
+  const makeComputersMove = (difficulty) => {
+    console.log("Making move: " + difficulty);
+
+    switch (difficulty) {
+      case "easy":
+        makeComputersMoveEasy();
+        break;
+      case "medium":
+        makeComputersMoveMedium();
+        break;
+      case "hard":
+        makeComputersMoveHard();
+        break;
+      default:
+        console.error("Invalid difficulty level");
+    }
+  };
+
   const evaluateEdgeState = () => {
     if (confirmedEdges < countConfirmedEdges(edgeState)) {
       setConfirmedEdges(countConfirmedEdges(edgeState));
       if (props.playersTurn === 1) {
         props.setPlayersTurn(2);
         if (props.players[1].isComputer) {
-          makeComputersMove();
+          makeComputersMove(props.players[1].difficulty);
           setTimeout(() => {
             props.setPlayersTurn(1);
           }, 2500);
@@ -327,6 +406,9 @@ export const GameBoard = (props) => {
           setGameOverModalVisible={setGameOverModalVisible}
           handleReset={handleReset}
           handleResetChangeOpts={handleResetChangeOpts}
+          player1Score={player1Score}
+          player2Score={player2Score}
+          players={props.players}
         />
       </Modal>
       <Modal
