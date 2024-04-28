@@ -87,12 +87,6 @@ export const GameBoard = (props) => {
   }, [loadReset]);
 
   useEffect(() => {
-    if (remainingCells === 0 && isLoadedGameplay) {
-      showGameplay();
-    }
-  }, [remainingCells, isLoadedGameplay]);
-
-  useEffect(() => {
     evaluateEdgeState();
   }, [edgeState]);
 
@@ -212,11 +206,26 @@ export const GameBoard = (props) => {
       (edge) => edge.ownership === 0 && edge.status === "open"
     );
 
-    // Check if there are any available edges for the computer to claim
     if (availableEdges.length > 0) {
-      // Randomly select one of the available edges
+      // Identify nearly closed edges
+      const nearlyClosedEdges = availableEdges.filter((edge) => {
+        // Check if completing this edge would nearly complete a cell
+        const cellCandidates = getEdgePairs(edge.x, edge.y)
+          .map(({ x, y }) =>
+            cellState.find((cell) => cell.x === x && cell.y === y)
+          )
+          .filter((cell) => cell && cell.ownership === "owned");
+
+        return cellCandidates.length === 2; // Edge would nearly complete a cell
+      });
+
+      // Prioritize nearly closed edges if any are found
+      const prioritizedEdges =
+        nearlyClosedEdges.length > 0 ? nearlyClosedEdges : availableEdges;
+
+      // Randomly select one of the prioritized edges
       const randomEdge =
-        availableEdges[Math.floor(Math.random() * availableEdges.length)];
+        prioritizedEdges[Math.floor(Math.random() * prioritizedEdges.length)];
 
       // Update the selected edge's ownership to 2 and status to "confirmed"
       const updatedEdge = { ...randomEdge, ownership: 2, status: "confirmed" };
@@ -231,7 +240,6 @@ export const GameBoard = (props) => {
       // Update the state to trigger a re-render
       setEdgeState(updatedEdgeState);
     } else {
-      // Handle the case when there are no available edges for the computer to claim
       console.log("No available edges for the computer to claim.");
     }
   };
