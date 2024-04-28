@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Dimensions,
   Text,
   View,
   Switch,
@@ -8,6 +9,9 @@ import {
   TextInput,
 } from "react-native";
 import CustomText from "./CustomText";
+import { darkenColor, lightenColor, getRandomComputerName } from "./helper";
+
+const { width, height } = Dimensions.get("window");
 
 const StartMenu = ({
   gridSize,
@@ -23,6 +27,14 @@ const StartMenu = ({
   const [showDifficultyOptions, setShowDifficultyOptions] = useState(false);
   const [playerOneColor, setPlayerOneColor] = useState("#1E88E5");
   const [playerTwoColor, setPlayerTwoColor] = useState("#FF5252");
+
+  const handleColorSet = (player, chosenColor) => {
+    if (player === 1) {
+      playerTwoColor !== chosenColor && setPlayerOneColor(chosenColor);
+    } else {
+      playerOneColor !== chosenColor && setPlayerTwoColor(chosenColor);
+    }
+  };
 
   const handleIncrease = () => {
     if (gridSize <= 11) {
@@ -119,7 +131,7 @@ const StartMenu = ({
           styles={styles.playerText}
         />
         <View style={{ flexDirection: "row" }}>
-          <View style={{ marginHorizontal: "5%" }}>
+          <View>
             <CustomText
               text="Name:"
               fontFamily="Quicksand_400Regular"
@@ -138,10 +150,81 @@ const StartMenu = ({
               fontFamily="Quicksand_400Regular"
               styles={styles.label}
             />
-            <TouchableOpacity
-              style={[styles.colorBox, { backgroundColor: playerOneColor }]}
-              // onPress={() => setPlayerOneColor("#1E88E5")}
-            />
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={[
+                  styles.colorBox,
+                  {
+                    backgroundColor: "#1E88E5",
+                    borderColor:
+                      playerOneColor === "#1E88E5"
+                        ? darkenColor("#1E88E5")
+                        : lightenColor("#1E88E5"),
+                    borderWidth:
+                      playerOneColor === "#1E88E5" ||
+                      playerTwoColor === "#1E88E5"
+                        ? 3
+                        : 0,
+                  },
+                ]}
+                onPress={() => handleColorSet(1, "#1E88E5")}
+              />
+              <TouchableOpacity
+                style={[
+                  styles.colorBox,
+                  {
+                    backgroundColor: "#FF5252",
+                    borderColor:
+                      playerOneColor === "#FF5252"
+                        ? darkenColor("#FF5252")
+                        : lightenColor("#FF5252"),
+                    borderWidth:
+                      playerOneColor === "#FF5252" ||
+                      playerTwoColor === "#FF5252"
+                        ? 3
+                        : 0,
+                  },
+                ]}
+                onPress={() => handleColorSet(1, "#FF5252")}
+              />
+              <TouchableOpacity
+                style={[
+                  styles.colorBox,
+                  {
+                    backgroundColor: "#ffcf40",
+                    borderColor:
+                      playerOneColor === "#ffcf40"
+                        ? darkenColor("#ffcf40")
+                        : lightenColor("#ffcf40"),
+                    borderWidth:
+                      playerOneColor === "#ffcf40" ||
+                      playerTwoColor === "#ffcf40"
+                        ? 3
+                        : 0,
+                  },
+                ]}
+                onPress={() => handleColorSet(1, "#ffcf40")}
+              />
+
+              <TouchableOpacity
+                style={[
+                  styles.colorBox,
+                  {
+                    backgroundColor: "#4CAF50",
+                    borderColor:
+                      playerOneColor === "#4CAF50"
+                        ? darkenColor("#4CAF50")
+                        : lightenColor("#4CAF50"),
+                    borderWidth:
+                      playerOneColor === "#4CAF50" ||
+                      playerTwoColor === "#4CAF50"
+                        ? 3
+                        : 0,
+                  },
+                ]}
+                onPress={() => handleColorSet(1, "#4CAF50")}
+              />
+            </View>
           </View>
         </View>
       </View>
@@ -153,7 +236,8 @@ const StartMenu = ({
           styles={styles.playerText}
         />
         <View style={{ flexDirection: "row" }}>
-          <View style={{ marginHorizontal: "5%" }}>
+          {/* <View> */}
+          <View>
             <CustomText
               text="Name:"
               fontFamily="Quicksand_400Regular"
@@ -172,10 +256,81 @@ const StartMenu = ({
               fontFamily="Quicksand_400Regular"
               styles={styles.label}
             />
-            <TouchableOpacity
-              style={[styles.colorBox, { backgroundColor: playerTwoColor }]}
-              // onPress={() => setPlayerOneColor("#FF5252")}
-            />
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={[
+                  styles.colorBox,
+                  {
+                    backgroundColor: "#1E88E5",
+                    borderColor:
+                      playerTwoColor === "#1E88E5"
+                        ? darkenColor("#1E88E5")
+                        : lightenColor("#1E88E5"),
+                    borderWidth:
+                      playerOneColor === "#1E88E5" ||
+                      playerTwoColor === "#1E88E5"
+                        ? 3
+                        : 0,
+                  },
+                ]}
+                onPress={() => handleColorSet(2, "#1E88E5")}
+              />
+              <TouchableOpacity
+                style={[
+                  styles.colorBox,
+                  {
+                    backgroundColor: "#FF5252",
+                    borderColor:
+                      playerTwoColor === "#FF5252"
+                        ? darkenColor("#FF5252")
+                        : lightenColor("#FF5252"),
+                    borderWidth:
+                      playerOneColor === "#FF5252" ||
+                      playerTwoColor === "#FF5252"
+                        ? 3
+                        : 0,
+                  },
+                ]}
+                onPress={() => handleColorSet(2, "#FF5252")}
+              />
+              <TouchableOpacity
+                style={[
+                  styles.colorBox,
+                  {
+                    backgroundColor: "#ffcf40",
+                    borderColor:
+                      playerTwoColor === "#ffcf40"
+                        ? darkenColor("#ffcf40")
+                        : lightenColor("#ffcf40"),
+                    borderWidth:
+                      playerOneColor === "#ffcf40" ||
+                      playerTwoColor === "#ffcf40"
+                        ? 3
+                        : 0,
+                  },
+                ]}
+                onPress={() => handleColorSet(2, "#ffcf40")}
+              />
+
+              <TouchableOpacity
+                style={[
+                  styles.colorBox,
+                  {
+                    backgroundColor: "#4CAF50",
+                    borderColor:
+                      playerTwoColor === "#4CAF50"
+                        ? darkenColor("#4CAF50")
+                        : lightenColor("#4CAF50"),
+                    borderWidth:
+                      playerOneColor === "#4CAF50" ||
+                      playerTwoColor === "#4CAF50"
+                        ? 3
+                        : 0,
+                  },
+                ]}
+                onPress={() => handleColorSet(2, "#4CAF50")}
+              />
+            </View>
           </View>
         </View>
         <View style={styles.switchContainer}>
@@ -189,6 +344,7 @@ const StartMenu = ({
             onValueChange={(value) => {
               setIsComputerPlayerEnabled(value);
               setShowDifficultyOptions(value);
+              value && setPlayerTwoName(getRandomComputerName());
             }}
           />
         </View>
@@ -199,7 +355,6 @@ const StartMenu = ({
               fontFamily="Quicksand_400Regular"
               styles={styles.label}
             />
-
             <TouchableOpacity
               onPress={() => setComputerDifficulty("easy")}
               style={[
@@ -241,13 +396,14 @@ const StartMenu = ({
 
 const styles = StyleSheet.create({
   bigTitle: {
-    fontSize: 24,
-    marginBottom: 30,
+    fontSize: height * 0.025,
+    marginBottom: height * 0.025,
     textAlign: "center",
   },
   menu: {
+    marginTop: height * 0.1,
     justifyContent: "center",
-    padding: 30,
+    paddingHorizontal: 30,
 
     backgroundColor: "white",
     width: "77%",
@@ -276,13 +432,15 @@ const styles = StyleSheet.create({
   subTitleText: {
     fontSize: 15,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: height * 0.0075,
     marginLeft: -5,
   },
   switchContainer: {
     flexDirection: "row",
     alignItems: "center",
+    marginTop: 8,
     marginBottom: 10,
+    marginLeft: 36,
   },
   playerView: {
     width: "100%",
@@ -304,13 +462,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 10,
     marginBottom: 10,
+    marginRight: 10,
     backgroundColor: "white",
     borderRadius: 2,
-    width: 150,
+    width: width * 0.3,
   },
   label: {
     marginBottom: 5,
     color: "black",
+    fontSize: height * 0.018,
   },
   difficultyOptions: {
     flexDirection: "row",
@@ -320,8 +480,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   difficultyButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
     marginHorizontal: 5,
     backgroundColor: "#DDDDDD",
     borderRadius: 5,
@@ -330,7 +490,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#4CAF50",
   },
   selectedMedButton: {
-    backgroundColor: "#FFD700",
+    backgroundColor: "#ffcf40",
   },
   selectedHardButton: {
     backgroundColor: "#FF5733",
@@ -339,22 +499,24 @@ const styles = StyleSheet.create({
     color: "black",
   },
   colorBox: {
-    width: 30,
-    height: 30,
+    width: height * 0.025,
+    height: height * 0.025,
     marginVertical: 5,
     borderRadius: 5,
+    marginHorizontal: 4,
   },
 
   button: {
-    backgroundColor: "#DDDDDD",
-    padding: 10,
+    borderWidth: 2,
+    borderColor: "#4CAF50",
+    backgroundColor: lightenColor("#4CAF50"),
+    padding: height * 0.01,
     borderRadius: 5,
     width: "40%",
     alignItems: "center",
   },
   buttonText: {
-    fontSize: 18,
-    padding: 5,
+    fontSize: 14,
   },
 });
 

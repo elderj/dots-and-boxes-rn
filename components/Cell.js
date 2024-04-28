@@ -1,7 +1,8 @@
 import React from "react";
+import { lightenColor } from "./helper";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-const Cell = ({ x, y, boardSize, gridSize, cellState }) => {
+const Cell = ({ x, y, boardSize, gridSize, cellState, p1C, p2C }) => {
   const index = cellState.findIndex(
     (cell) => cell.x === x + 1 && cell.y === y + 1
   );
@@ -12,10 +13,9 @@ const Cell = ({ x, y, boardSize, gridSize, cellState }) => {
         return "lightgray";
       case "owned":
         if (capturedBy === 1) {
-          return "#64B5F6";
+          return lightenColor(p1C);
         } else if (capturedBy === 2) {
-          // Check which player captured the cell
-          return "#FF8A80";
+          return lightenColor(p2C);
         }
       default:
         return "lightgray"; // Default color

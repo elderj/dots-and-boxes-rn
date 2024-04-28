@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import CustomText from "./CustomText";
+
+const { width, height } = Dimensions.get("window");
 
 const ResetModalContent = (props) => {
   const closeModal = () => {
@@ -16,30 +26,52 @@ const ResetModalContent = (props) => {
     <View style={styles.container}>
       {q === 1 ? (
         <>
-          <Text style={styles.title}>Are you sure you want to reset?</Text>
+          <CustomText
+            text="Are you sure you want to reset?"
+            fontFamily="Quicksand_700Bold"
+            styles={styles.title}
+          />
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={handleYes}>
-              <Text style={styles.buttonText}>Yes</Text>
+              <CustomText
+                text="Yes"
+                fontFamily="Quicksand_700Bold"
+                styles={styles.buttonText}
+              />
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={closeModal}>
-              <Text style={styles.buttonText}>No</Text>
+              <CustomText
+                text="No"
+                fontFamily="Quicksand_700Bold"
+                styles={styles.buttonText}
+              />
             </TouchableOpacity>
           </View>
         </>
       ) : (
         <>
-          <Text style={styles.title}>
-            Change options or just start the same game over??
-          </Text>
+          <CustomText
+            text="Change options or just start the same game over??"
+            fontFamily="Quicksand_700Bold"
+            styles={styles.title}
+          />
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.button}
               onPress={props.handleResetChangeOpts}
             >
-              <Text style={styles.buttonText}>Change Options</Text>
+              <CustomText
+                text="Change Options"
+                fontFamily="Quicksand_700Bold"
+                styles={styles.buttonText}
+              />
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={props.handleReset}>
-              <Text style={styles.buttonText}>Reset Game</Text>
+              <CustomText
+                text="Reset Game"
+                fontFamily="Quicksand_700Bold"
+                styles={styles.buttonText}
+              />
             </TouchableOpacity>
           </View>
         </>
@@ -50,20 +82,23 @@ const ResetModalContent = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 300,
-    height: 300, // Adjust the size as needed
-    borderRadius: 10,
-    backgroundColor: "#fff",
+    width: width * 0.8, // Adjust the width based on screen width
+    width: "100%", // Adjust the width based on screen width
+    height: "100%",
+    // borderRadius: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     alignItems: "center",
     justifyContent: "center",
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    marginTop: -150, // Half of the height
-    marginLeft: -150, // Half of the width
+    // position: "absolute",
+    // top: "50%",
+    // left: "50%",
+    // marginTop: -((height * 0.4) / 2), // Half of the height
+    // marginLeft: -((width * 0.8) / 2), // Half of the width
+    // borderColor: "black",
+    // borderWidth: 5,
   },
   title: {
-    fontSize: 20,
+    fontSize: height * 0.025,
     padding: 20,
     textAlign: "center",
   },
@@ -75,14 +110,14 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#DDDDDD",
-    padding: 10,
+    padding: 8,
     borderRadius: 5,
     width: "40%",
     alignItems: "center",
   },
   buttonText: {
-    fontSize: 18,
-    padding: 5,
+    fontSize: height * 0.02,
+    padding: 10,
   },
 });
 

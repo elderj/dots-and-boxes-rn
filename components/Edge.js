@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { darkenColor, lightenColor } from "./helper";
 
 // TODO: Affect Cells based off edge values
 // TODO: Add player scores
@@ -15,6 +16,8 @@ const Edge = ({
   status,
   playersTurn,
   ownership,
+  p1Color,
+  p2Color,
 }) => {
   const handlePress = () => {
     if (status !== "confirmed") {
@@ -71,7 +74,7 @@ const Edge = ({
             top: verticalOffset - 2,
             height: 5,
             padding: 0,
-            backgroundColor: highlightEdge(status, ownership),
+            backgroundColor: highlightEdge(status, ownership, p1Color, p2Color),
           },
         ]}
       >
@@ -93,7 +96,7 @@ const Edge = ({
             left: horizontalOffset - 2,
             top: verticalOffset - boardSize / (gridSize * 2),
 
-            backgroundColor: highlightEdge(status, ownership),
+            backgroundColor: highlightEdge(status, ownership, p1Color, p2Color),
           },
         ]}
       >
@@ -103,15 +106,15 @@ const Edge = ({
   );
 };
 
-const highlightEdge = (status, ownership) => {
+const highlightEdge = (status, ownership, p1Color, p2Color) => {
   if (status === "selected" && ownership === 1) {
-    return "#64B5F6";
+    return lightenColor(p1Color);
   } else if (status === "selected" && ownership === 2) {
-    return "#FF8A80";
+    return lightenColor(p2Color);
   } else if (status === "confirmed" && ownership === 1) {
-    return "#1E88E5";
+    return p1Color;
   } else if (status === "confirmed" && ownership === 2) {
-    return "#FF5252";
+    return p2Color;
   } else {
     return "black";
   }

@@ -84,3 +84,82 @@ export const getDefaultPlayers = () => {
     },
   ];
 };
+
+export const lightenColor = (hexColor) => {
+  // Remove the '#' if present
+  hexColor = hexColor.replace("#", "");
+
+  // Convert hex to RGB
+  let r = parseInt(hexColor.substring(0, 2), 16);
+  let g = parseInt(hexColor.substring(2, 4), 16);
+  let b = parseInt(hexColor.substring(4, 6), 16);
+
+  // Calculate lighter shade (increase RGB values)
+  r = Math.min(255, r + 50);
+  g = Math.min(255, g + 50);
+  b = Math.min(255, b + 50);
+
+  // Convert RGB to hex
+  r = r.toString(16).padStart(2, "0");
+  g = g.toString(16).padStart(2, "0");
+  b = b.toString(16).padStart(2, "0");
+
+  return `#${r}${g}${b}`;
+};
+
+export const darkenColor = (hexColor) => {
+  // Remove the '#' if present
+  hexColor = hexColor.replace("#", "");
+
+  // Convert hex to RGB
+  let r = parseInt(hexColor.substring(0, 2), 16);
+  let g = parseInt(hexColor.substring(2, 4), 16);
+  let b = parseInt(hexColor.substring(4, 6), 16);
+
+  // Calculate darker shade (decrease RGB values)
+  r = Math.max(0, r - 50);
+  g = Math.max(0, g - 50);
+  b = Math.max(0, b - 50);
+
+  // Convert RGB to hex
+  r = r.toString(16).padStart(2, "0");
+  g = g.toString(16).padStart(2, "0");
+  b = b.toString(16).padStart(2, "0");
+
+  return `#${r}${g}${b}`;
+};
+
+export const getRandomComputerName = () => {
+  const adjectives = [
+    "Alpha",
+    "Beta",
+    "Gamma",
+    "Delta",
+    "Omega",
+    "Sigma",
+    "Epsilon",
+    "Zeta",
+    "Theta",
+    "Kappa",
+  ];
+  const nouns = [
+    "Cyber",
+    "Bot",
+    "AI",
+    "Processor",
+    "Server",
+    "Mainframe",
+    "Data",
+    "Matrix",
+    "Byte",
+    "Chip",
+  ];
+
+  const randomAdjectiveIndex = Math.floor(Math.random() * adjectives.length);
+  const randomNounIndex = Math.floor(Math.random() * nouns.length);
+
+  const adjective = adjectives[randomAdjectiveIndex];
+  const noun = nouns[randomNounIndex];
+
+  return `${adjective} ${noun}`;
+};

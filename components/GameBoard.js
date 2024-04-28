@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import Cell from "./Cell";
 import Edge from "./Edge";
+import CustomText from "./CustomText";
 import {
   countConfirmedEdges,
   getBlankCells,
@@ -25,6 +26,9 @@ const { width, height } = Dimensions.get("window");
 const boardSize = Math.min(width, height) * 0.9; // Adjust the multiplier as needed
 
 export const GameBoard = (props) => {
+  const p1C = props.players[0].color;
+  const p2C = props.players[1].color;
+
   const [edgeState, setEdgeState] = useState(getBlankEdges(props.gridSize));
   const [cellState, setCellState] = useState(getBlankCells(props.gridSize));
   const [player1Score, setPlayer1Score] = useState(
@@ -233,8 +237,6 @@ export const GameBoard = (props) => {
   };
 
   const makeComputersMove = (difficulty) => {
-    console.log("Making move: " + difficulty);
-
     switch (difficulty) {
       case "easy":
         makeComputersMoveEasy();
@@ -256,10 +258,10 @@ export const GameBoard = (props) => {
       if (props.playersTurn === 1) {
         props.setPlayersTurn(2);
         if (props.players[1].isComputer) {
-          makeComputersMove(props.players[1].difficulty);
           setTimeout(() => {
+            makeComputersMove(props.players[1].difficulty);
             props.setPlayersTurn(1);
-          }, 2500);
+          }, 1000);
         }
       } else {
         props.setPlayersTurn(1);
@@ -310,23 +312,29 @@ export const GameBoard = (props) => {
               setEdgeState={setEdgeState}
               status={status}
               playersTurn={props.playersTurn}
+              p1Color={p1C}
+              p2Color={p2C}
               ownership={ownership}
             />
           );
           relativeIdxX++;
         } else {
-          dots.push(
-            <View
-              key={`${i}.${j}`}
-              style={[
-                styles.dot,
-                {
-                  left: (boardSize / (props.gridSize * 2)) * i - 5,
-                  top: (boardSize / (props.gridSize * 2)) * j - 5,
-                },
-              ]}
-            />
-          );
+          if (i % 2 === 0) {
+            dots.push(
+              <View
+                key={`${i}.${j}`}
+                style={[
+                  styles.dot,
+
+                  {
+                    left: (boardSize / (props.gridSize * 2)) * i - 5,
+                    top: (boardSize / (props.gridSize * 2)) * j - 5,
+                    backgroundColor: "#020202",
+                  },
+                ]}
+              />
+            );
+          } // else case here renders dots in the middle of cells!
         }
       }
     }
@@ -346,6 +354,8 @@ export const GameBoard = (props) => {
             boardSize={boardSize}
             gridSize={props.gridSize}
             cellState={cellState}
+            p1C={p1C}
+            p2C={p2C}
           />
         );
       }
@@ -364,15 +374,30 @@ export const GameBoard = (props) => {
 
     return (
       <View style={styles.playerInfo}>
-        <View>
+        <View
+          style={{
+            paddingVertical: 5,
+            borderWidth: 5,
+            marginHorizontal: 10,
+            marginVertical: 10,
+            borderColor: props.playersTurn === 1 ? p1.color : "white",
+          }}
+        >
           <View style={styles.player}>
             <View style={[styles.colorBox, { backgroundColor: p1.color }]} />
             <Text style={styles.playerText}>{p1.name}</Text>
           </View>
           <Text style={styles.playerScoreText}>Score: {player1Score}</Text>
         </View>
-
-        <View>
+        <View
+          style={{
+            paddingVertical: 5,
+            borderWidth: 5,
+            marginHorizontal: 10,
+            marginVertical: 10,
+            borderColor: props.playersTurn === 2 ? p2.color : "white",
+          }}
+        >
           <View style={styles.player}>
             <View style={[styles.colorBox, { backgroundColor: p2.color }]} />
             <Text style={styles.playerText}>{p2.name}</Text>
@@ -386,8 +411,12 @@ export const GameBoard = (props) => {
   const renderGeneralInfo = () => {
     return (
       <View style={styles.generalInfo}>
-        <Text>Remaining Edges: {remainingEdges}</Text>
-        <Text>Remaining Cells: {remainingCells}</Text>
+        <Text style={styles.playerScoreText}>
+          Remaining Edges: {remainingEdges}
+        </Text>
+        <Text style={styles.playerScoreText}>
+          Remaining Cells: {remainingCells}
+        </Text>
       </View>
     );
   };
@@ -433,7 +462,6 @@ export const GameBoard = (props) => {
           setInfoModalVisible(false);
         }}
       >
-        {/* TODO: info modal content */}
         <InfoModalContent setInfoModalVisible={setInfoModalVisible} />
       </Modal>
       {renderPlayerInfo()}
@@ -468,7 +496,6 @@ const styles = StyleSheet.create({
   playerInfo: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 30,
   },
   player: {
     flexDirection: "row",
@@ -481,10 +508,11 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   playerText: {
-    fontSize: 16,
+    fontSize: height * 0.019,
   },
   playerScoreText: {
     textAlign: "center",
+    fontSize: height * 0.016,
   },
   generalInfo: {
     alignItems: "center",
@@ -526,8 +554,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
-    fontSize: 18,
-    padding: 5,
+    fontSize: height * 0.018,
   },
 });
 

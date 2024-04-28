@@ -84,11 +84,6 @@ export default function App() {
             fontFamily="Quicksand_700Bold"
             styles={styles.title}
           />
-          <CustomText
-            text={"Player" + playersTurn + "'s turn"}
-            fontFamily="Quicksand_400Regular"
-            styles={styles.gameBoardText}
-          />
 
           <GameBoard
             gridSize={gridSize}

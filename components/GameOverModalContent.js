@@ -1,12 +1,24 @@
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import CustomText from "./CustomText";
 
+const { width, height } = Dimensions.get("window");
+
 const GameOverModalContent = (props) => {
   const winnerIdx = props.player1Score > props.player2Score ? 0 : 1;
-
   const winnerName = props.players[winnerIdx].name;
+
+  // Calculate font sizes and dimensions based on screen dimensions
+
+  const buttonWidth = width * 0.32;
 
   return (
     <View style={styles.container}>
@@ -28,7 +40,7 @@ const GameOverModalContent = (props) => {
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.button, { marginRight: 10 }]}
+          style={[styles.button, { width: buttonWidth }]}
           onPress={props.handleResetChangeOpts}
         >
           <CustomText
@@ -37,7 +49,10 @@ const GameOverModalContent = (props) => {
             styles={styles.buttonText}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={props.handleReset}>
+        <TouchableOpacity
+          style={[styles.button, { width: buttonWidth }]}
+          onPress={props.handleReset}
+        >
           <CustomText
             text="Reset Game"
             fontFamily="Quicksand_400Regular"
@@ -51,29 +66,31 @@ const GameOverModalContent = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 400,
-    height: 400, // Adjust the size as needed
-    borderRadius: 10,
-    backgroundColor: "#fff",
+    width: width * 0.8, // Adjust the width based on screen width
+    width: "100%", // Adjust the width based on screen width
+    height: "100%",
+    // borderRadius: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     alignItems: "center",
     justifyContent: "center",
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    marginTop: -250, // Half of the height
-    marginLeft: -200, // Half of the width
-    borderColor: "black",
-    borderWidth: 5,
+    // position: "absolute",
+    // top: "50%",
+    // left: "50%",
+    // marginTop: -((height * 0.4) / 2), // Half of the height
+    // marginLeft: -((width * 0.8) / 2), // Half of the width
+    // borderColor: "black",
+    // borderWidth: 5,
   },
   fancyTitle: {
-    fontSize: 30,
+    // fontSize will be dynamically set
+    fontSize: height * 0.0375,
   },
   image: {
-    width: 140,
-    height: 140,
+    width: width * 0.25, // Adjust the width based on screen width
+    height: width * 0.25, // Adjust the height based on screen width
   },
   winnerMsg: {
-    fontSize: 18,
+    // fontSize will be dynamically set
     marginTop: 8,
     marginBottom: 30,
   },
@@ -81,17 +98,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     width: "100%",
+    marginTop: 20,
   },
   button: {
     backgroundColor: "#DDDDDD",
-    padding: 10,
+    padding: 8,
     borderRadius: 5,
     width: "40%",
     alignItems: "center",
   },
   buttonText: {
-    fontSize: 18,
-    padding: 5,
+    fontSize: height * 0.02,
+    padding: 10,
   },
 });
 
